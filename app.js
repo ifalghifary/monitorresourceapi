@@ -46,17 +46,32 @@ setInterval(() => {
   mrmr()
 }, 5000)
 
+function errorHandler(err, req, res, next) {
+  if (res.headersSent) {
+    return next(err)
+  }
+  res.status(500)
+  res.render('error', { error: err })
+}
+
 app.get('/monitorcpu', (req, res) => {
-  fs.readFile('data.json', 'utf-8', (err, data) => {
-    if (err) {
-      // console.log(err)
-      fs.writeFile('data.json', `{ "tes": "tes" }`, (err) => {
-        if (err) console.log(err)
-        //   console.log('Successfully Written to File.')
-      })
-    }
-    res.send(data)
-  })
+  if (req.headers.token == 'd01ffd81-72e3-4cc5-b3d4-5e88282e20ad') {
+    fs.readFile('data.json', 'utf-8', (err, data) => {
+      if (err) {
+        // console.log(err)
+        fs.writeFile('data.json', `{ "tes": "tes" }`, (err) => {
+          if (err) console.log(err)
+          //   console.log('Successfully Written to File.')
+        })
+      }
+      res.send(data)
+    })
+  } else {
+    res.send('simple tool for monitor resource this pc')
+  }
+})
+app.use(function (req, res) {
+  res.status(404).send('simple tool for monitor resource this pc')
 })
 
 app.listen(port, () => {
